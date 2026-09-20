@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Mudja-On-Top",
+  "version": "1.0.0",
+  "description": "A simple extension that puts 4 Mudja videos on top of Youtube.",
+  
+  "icons": {
+    "16": "16mudja.png",
+    "48": "48mudja.png",
+    "128": "128mudja.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://example.com*"
+  ]
+}
