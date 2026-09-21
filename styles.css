@@ -1,3 +1,107 @@
-.mudja-video {
-    background-color: red;
+.mudja-container {
+    width: 100%;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+    background-color: rgb(0,0,0);
+    padding: 20px 0;
+}
+
+
+/* VIDEO CARD */
+
+.mudja-card {
+    min-width: 0;
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+/* THUMBNAIL */
+
+.mudja-thumbnail-link {
+    display: block;
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    position: relative;
+}
+
+.mudja-thumbnail {
+    display: block;
+
+    width: 100%;
+    aspect-ratio: 16 / 9;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+}
+
+
+/* HOVER */
+
+.mudja-card:hover {
+    transform: translateY(-4px);
+}
+
+.mudja-card:hover .mudja-thumbnail {
+    transform: scale(1.04);
+}
+
+
+/* INFO */
+
+.mudja-info {
+    padding-top: 10px;
+    padding-left: 2px;
+}
+
+
+/* TITLE */
+
+.mudja-title {
+    color: #0f0f0f;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    line-height: 1.3;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+/* CHANNEL */
+
+.mudja-channel {
+    margin-top: 7px;
+
+    color: #606060;
+
+    font-size: 14px;
+}
+
+
+/* VIEWS / DATE */
+
+.mudja-stats {
+    margin-top: 3px;
+
+    color: #606060;
+
+    font-size: 14px;
 }
