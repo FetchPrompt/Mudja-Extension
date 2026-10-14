@@ -48,54 +48,17 @@ const observer = new MutationObserver(() => {
 
         selected.forEach(link => {
 
-            const videoId = new URL(link).searchParams.get("v");
+        const videoId = new URL(link).searchParams.get("v");
+        const card = document.createElement("div");
+        card.classList.add("mudja-card");
 
-            // VIDEO CARD
-            const card = document.createElement("div");
-            card.classList.add("mudja-card");
+        const anchor = document.createElement("a")
 
-            // LINK
-            const linkElement = document.createElement("a");
-            linkElement.href = link;
-            linkElement.target = "_blank";
-            linkElement.classList.add("mudja-thumbnail-link");
-
-            // THUMBNAIL
-            const thumbnail = document.createElement("img");
-            thumbnail.src = `https://i.ytimg.com/vi/${videoId}/hq720.jpg`;
-            thumbnail.classList.add("mudja-thumbnail");
-
-            linkElement.appendChild(thumbnail);
-
-            // INFO
-            const info = document.createElement("div");
-            info.classList.add("mudja-info");
-
-            const title = document.createElement("div");
-            title.classList.add("mudja-title");
-            title.textContent = "Mudja video";
-
-            const channel = document.createElement("div");
-            channel.classList.add("mudja-channel");
-            channel.textContent = "Mudja ✓";
-
-            const stats = document.createElement("div");
-            stats.classList.add("mudja-stats");
-            stats.textContent = "Mudja • YouTube";
-
-            info.appendChild(title);
-            info.appendChild(channel);
-            info.appendChild(stats);
-
-            card.appendChild(linkElement);
-            card.appendChild(info);
-
-            container.appendChild(card);
+        container.appendChild(card);
         });
 
         grid.insertBefore(container, titleContainer);
     }
-
 });
 
 observer.observe(document.body, {
