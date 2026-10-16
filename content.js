@@ -36,32 +36,67 @@ popularLinks.sort(() => Math.random() - 0.5);
 
 const selected = popularLinks.slice(0, 4);
 
+const ids = selected.map(link => new URL(link).searchParams.get("v"));
+
+async function getVideoData(){
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${ids.join(",")}&key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.items;
+}
+
+let videoData = null;
+getVideoData().then(items => {
+    videoData = items;
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+})
+
 const observer = new MutationObserver(() => {
 
     const grid = document.querySelector("ytd-rich-grid-renderer");
     const titleContainer = grid?.querySelector("#title-container");
+    const template = [...(grid?.querySelectorAll("yt-lockup-view-model") ?? [])]
+    .find(card =>
+        card.querySelector('a[href^="/watch"]') &&
+        card.querySelector("yt-thumbnail-view-model img")?.src.includes("ytimg.com") &&
+        !card.closest("ytd-ad-slot-renderer, ytd-in-feed-ad-layout-renderer")
+    );
 
-    if (grid && titleContainer && !grid.querySelector(".mudja-container")) {
+    if (template && grid && videoData && titleContainer && !grid.querySelector(".mudja-container")) {
 
         const container = document.createElement("div");
         container.classList.add("mudja-container");
 
-        selected.forEach(link => {
+        videoData.forEach(item => {
 
-        const videoId = new URL(link).searchParams.get("v");
-        const card = document.createElement("div");
-        card.classList.add("mudja-card");
+            const card = template.cloneNode(true);
+            card.querySelectorAll('a[href^="/watch"]').forEach(a => {
+                a.href = `/watch?v=${item.id}`;
+            });
 
-        const anchor = document.createElement("a")
+            const img = card.querySelector("yt-thumbnail-view-model img");
+            if (img) {
+                img.removeAttribute("srcset");
+                img.src = `https://i.ytimg.com/vi/${item.id}/hq720.jpg`;
+            
+            const title = card.querySelector(".yt-lockup-metadata-view-model__title");
+            if (title) title.textContent = item.snippet.title;
 
-        container.appendChild(card);
+            const rows = card.querySelectorAll(".yt-content-metadata-view-model__metadata-row");
+            if (rows[0]) rows[0].textContent = item.snippet.channelTitle;
+            if (rows[1]) {
+                const views = Number(item.statistics.viewCount).toLocaleString("sr");
+                const date = new Date(item.snippet.publishedAt).toLocaleDateString("sr");
+                rows[1].textContent = `${views} pregleda • ${date}`;
+            }
+}
+            container.appendChild(card);
         });
 
         grid.insertBefore(container, titleContainer);
     }
 });
 
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
