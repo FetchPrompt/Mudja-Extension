@@ -13,7 +13,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.youtube.com/*"],
-      "js": ["config.js", "content.js"],
+      "js": ["config.js", "popularLinks.js", "content.js"],
       "css": ["styles.css"]
     }
   ],
@@ -23,8 +23,14 @@
     "activeTab",
     "tabs"
   ],
+  "web_accessible_resources": [
+      {
+          "resources": ["profilna.jpg", "walker.png"],
+          "matches": ["https://*.youtube.com/*"]
+      }
+  ],
 
   "host_permissions": [
-    "https://example.com*"
+    "https://www.googleapis.com/*"
   ]
 }

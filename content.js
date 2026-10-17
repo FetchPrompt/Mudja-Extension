@@ -1,36 +1,3 @@
-let popularLinks = [
-    "https://www.youtube.com/watch?v=EeB-sl07hdY",
-    "https://www.youtube.com/watch?v=kbLDxLdm0w8",
-    "https://www.youtube.com/watch?v=zjCvE5hV6jY",
-    "https://www.youtube.com/watch?v=QRMShFqP-rA",
-    "https://www.youtube.com/watch?v=I-sxAypEFpU",
-    "https://www.youtube.com/watch?v=Ka5VDnkyxGc",
-    "https://www.youtube.com/watch?v=tKwt6Uhz9nw",
-    "https://www.youtube.com/watch?v=AJqs61evqrQ",
-    "https://www.youtube.com/watch?v=8FzigI-Ny8I",
-    "https://www.youtube.com/watch?v=ckKB_WyjUNc",
-    "https://www.youtube.com/watch?v=g8Mvwb6mzDg",
-    "https://www.youtube.com/watch?v=85xo4YMIdcU",
-    "https://www.youtube.com/watch?v=qYEUEjaHfUM",
-    "https://www.youtube.com/watch?v=2caMSG24Ruo&pp=0gcJCSQMAYcqIYzv",
-    "https://www.youtube.com/watch?v=m8u_PlyM4kk&",
-    "https://www.youtube.com/watch?v=g0f2b2z1v3U",
-    "https://www.youtube.com/watch?v=JF9myRPmJrA",
-    "https://www.youtube.com/watch?v=yp5Q9jWPO-c&t=43s&pp=0gcJCSQMAYcqIYzv",
-    "https://www.youtube.com/watch?v=UqWCMZuqd_c",
-    "https://www.youtube.com/watch?v=kacUL20JKPE",
-    "https://www.youtube.com/watch?v=bcfwKn6alRI",
-    "https://www.youtube.com/watch?v=poQIuM2amXI",
-    "https://www.youtube.com/watch?v=xV4Eaf3MPN8",
-    "https://www.youtube.com/watch?v=bq_Piy6tm0Y",
-    "https://www.youtube.com/watch?v=G_PWcRzesPw&pp=0gcJCSQMAYcqIYzv",
-    "https://www.youtube.com/watch?v=n05MrO_Rki0",
-    "https://www.youtube.com/watch?v=MJmD1ZMJJ9c",
-    "https://www.youtube.com/watch?v=jgNH9M2vLGQ",
-    "https://www.youtube.com/watch?v=bU6JsAOzHUw",
-    "https://www.youtube.com/watch?v=DiHaFUUr5L8"
-];
-
 
 popularLinks.sort(() => Math.random() - 0.5);
 
@@ -54,47 +21,79 @@ getVideoData().then(items => {
     });
 })
 
+const avatarUrl = chrome.runtime.getURL("profilna.jpg");
+const walkerUrl = chrome.runtime.getURL("walker.png");
+const verifiedIcon = `<svg class="mudja-verified" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+const playIcon = `<svg class="mudja-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+
+function addWalker() {
+    if (document.querySelector(".mudja-track")) return;
+
+    const track = document.createElement("div");
+    track.classList.add("mudja-track");
+
+    const walker = document.createElement("div");
+    walker.classList.add("mudja-walker");
+    walker.innerHTML = `<img src="${walkerUrl}">`;
+
+    track.appendChild(walker);
+    document.body.appendChild(track);
+}
+
+addWalker();
+
+function formatViews(n) {
+    n = Number(n);
+    if (n >= 1000000) {
+        return (n / 1000000).toFixed(1).replace(".", ",").replace(",0", "") + " мил.";
+    }
+    if (n >= 1000) {
+        return Math.floor(n / 1000) + " хиљ.";
+    }
+    return String(n);
+}
+
+function formatAge(dateString) {
+    const days = Math.floor((Date.now() - new Date(dateString)) / 86400000);
+    if (days >= 365) return `пре ${Math.floor(days / 365)} год.`;
+    if (days >= 30) return `пре ${Math.floor(days / 30)} мес.`;
+    return `пре ${days} дан.`;
+}
+
 const observer = new MutationObserver(() => {
 
     const grid = document.querySelector("ytd-rich-grid-renderer");
     const titleContainer = grid?.querySelector("#title-container");
-    const template = [...(grid?.querySelectorAll("yt-lockup-view-model") ?? [])]
-    .find(card =>
-        card.querySelector('a[href^="/watch"]') &&
-        card.querySelector("yt-thumbnail-view-model img")?.src.includes("ytimg.com") &&
-        !card.closest("ytd-ad-slot-renderer, ytd-in-feed-ad-layout-renderer")
-    );
 
-    if (template && grid && videoData && titleContainer && !grid.querySelector(".mudja-container")) {
+    if (grid && videoData && titleContainer && !grid.querySelector(".mudja-container")) {
 
         const container = document.createElement("div");
         container.classList.add("mudja-container");
 
         videoData.forEach(item => {
+            const card = document.createElement("div");
+            card.classList.add("mudja-card");
 
-            const card = template.cloneNode(true);
-            card.querySelectorAll('a[href^="/watch"]').forEach(a => {
-                a.href = `/watch?v=${item.id}`;
-            });
+            card.innerHTML = `
+                <a class="mudja-thumbnail-link" href="/watch?v=${item.id}">
+                    <img class="mudja-thumbnail" src="https://i.ytimg.com/vi/${item.id}/hq720.jpg">
+                </a>
+                <div class="mudja-row">
+                    <img class="mudja-avatar" src="${avatarUrl}">
+                    <div class="mudja-info">
+                        <a class="mudja-title" href="/watch?v=${item.id}">${item.snippet.title}</a>
+                        <div class="mudja-channel">
+                            <a class="mudja-channel-link" href="/@Mudja">${item.snippet.channelTitle}</a>
+                            ${verifiedIcon}
+                        </div>
+                        <div class="mudja-stats">${playIcon}${formatViews(item.statistics.viewCount)} прегледа • ${formatAge(item.snippet.publishedAt)}</div>
+                    </div>
+                </div>
+            `;
 
-            const img = card.querySelector("yt-thumbnail-view-model img");
-            if (img) {
-                img.removeAttribute("srcset");
-                img.src = `https://i.ytimg.com/vi/${item.id}/hq720.jpg`;
-            
-            const title = card.querySelector(".yt-lockup-metadata-view-model__title");
-            if (title) title.textContent = item.snippet.title;
+    container.appendChild(card);
+});
 
-            const rows = card.querySelectorAll(".yt-content-metadata-view-model__metadata-row");
-            if (rows[0]) rows[0].textContent = item.snippet.channelTitle;
-            if (rows[1]) {
-                const views = Number(item.statistics.viewCount).toLocaleString("sr");
-                const date = new Date(item.snippet.publishedAt).toLocaleDateString("sr");
-                rows[1].textContent = `${views} pregleda • ${date}`;
-            }
-}
-            container.appendChild(card);
-        });
 
         grid.insertBefore(container, titleContainer);
     }
