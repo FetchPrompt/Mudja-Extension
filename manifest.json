@@ -25,7 +25,7 @@
   ],
   "web_accessible_resources": [
       {
-          "resources": ["profilna.jpg", "walker.png"],
+          "resources": ["PressStart2P-Regular.ttf", "profilna.jpg", "walker.png"],
           "matches": ["https://*.youtube.com/*"]
       }
   ],

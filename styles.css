@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "MudjaPixel";
+    src: url("PressStart2P-Regular.ttf");
+}
+
 .mudja-container {
     width: 100%;
     box-sizing: border-box;
@@ -156,9 +161,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 40px;
-    height: 40px;
-
+    width: 50px;
+    height: 50px;
+    pointer-events: auto;
     offset-path: inset(0 round 30px);
     offset-rotate: auto;
 
@@ -185,4 +190,120 @@
     inset: 0;
     z-index: 2147483647;
     pointer-events: none;
+}
+
+.mudja-snow {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2147483646;
+}
+
+.mudja-flake {
+    position: absolute;
+    top: -10px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(100, 130, 180, 0.6);
+    animation: mudja-fall linear infinite;
+}
+
+@keyframes mudja-fall {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(var(--drift), 110vh); }
+}
+
+.mudja-credit {
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(128, 128, 128, 0.5);
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--yt-spec-text-secondary, #aaa);
+}
+
+@media (max-width: 900px) {
+    .mudja-credit {
+        display: none;
+    }
+}
+
+.mudja-walker img {
+    animation: mudja-waddle 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes mudja-waddle {
+    from { rotate: -6deg; }
+    to   { rotate: 6deg; }
+}
+
+.mudja-walker:hover {
+    animation-play-state: paused;
+}
+
+.mudja-walker:hover img {
+    animation: none;
+}
+
+.mudja-walker {
+    pointer-events: auto;
+}
+
+.mudja-walker:hover {
+    animation-play-state: paused;
+}
+
+.mudja-bubble {
+    position: fixed;
+    display: none;
+    width: 300px;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background: #fff;
+    border: 3px solid #ff7b00;
+    color: #000;
+    font-family: "MudjaPixel", monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    text-shadow: 2px 2px 0 #cfcfcf;
+    pointer-events: none;
+    z-index: 2147483647;
+    font-weight: bold;
+}
+
+.mudja-bubble.visible {
+    display: block;
+}
+
+.mudja-bubble::after {
+    content: "_";
+    animation: mudja-cursor 0.8s steps(1) infinite;
+}
+
+@keyframes mudja-cursor {
+    50% { opacity: 0; }
+}
+
+.mudja-bubble::before {
+    content: "";
+    position: absolute;
+    left: var(--tail-x, 50%);
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 3px solid #ff7b00;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.mudja-bubble.below::before {
+    top: -9px;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.mudja-bubble.above::before {
+    bottom: -9px;
+    border-left: 0;
+    border-top: 0;
 }
